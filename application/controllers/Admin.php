@@ -12,8 +12,12 @@ class Admin extends CI_Controller {
   }
 
   public function add_patient() {
-    if($this->input->post()) {
+    $this->load->view('patients/add_patient');
+  }
 
+  public function save_patient() {
+    if($this->input->post()) {
+      $id = $this->input->post('id', TRUE);
       $data = array(
         'name' => $this->input->post('name', TRUE),
         'email' => $this->input->post('email', TRUE),
@@ -22,11 +26,12 @@ class Admin extends CI_Controller {
         'notes' => $this->input->post('notes', TRUE),
       );
 
-      $this->am->addPatient($data);
+      if($id == "") {
+        $this->am->addPatient($data);
+      } else {
+        $this->am->updatePatient($data, $id);
+      }
       redirect('admin/all_patients');
-
-    } else {
-      $this->load->view('patients/add_patient');
     }
   }
 
@@ -38,12 +43,19 @@ class Admin extends CI_Controller {
     ));
   }
 
-  public function edit_patient() {
+  public function edit_patient($id) {
+
+    $this->load->view('patients/add_patient', array(
+      'patient' => $this->am->getPatientById($id),
+    ));
 
   }
 
-  public function delete_patient() {
-
+  public function delete_patient($id) {
+    $resp = $this->am->deletepatientById($id);
+    if($resp) {
+      redirect('admin/all_patients');
+    }
   }
 
 }

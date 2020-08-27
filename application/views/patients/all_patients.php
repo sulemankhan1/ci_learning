@@ -30,8 +30,8 @@
           <td><?=$patient->prescription?></td>
           <td><?=$patient->notes?></td>
           <td>
-            <a href="#">Edit</a>
-            <a href="#">Delete</a>
+            <a href="<?=site_url('admin/edit_patient/'.$patient->id)?>">Edit</a>
+            <a href="<?=site_url('admin/delete_patient/'.$patient->id)?>" onclick="return confirm('Are you sure?')">Delete</a>
           </td>
         </tr>
       <?php } ?>
