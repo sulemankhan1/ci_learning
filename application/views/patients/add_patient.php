@@ -3,14 +3,29 @@
   <head>
     <meta charset="utf-8">
     <title>Add Patient</title>
+    <style>
+      .err_msg {
+        color: brown;
+        font-weight: bold;
+      }
+    </style>
   </head>
   <body>
 
     <h1>Add Patient Record</h1>
     <a href="<?=site_url('admin')?>">Go Back</a>
     <br><br>
-    <form action="<?=site_url('admin/save_patient')?>" method="post">
+
+    <?php if($this->session->flashdata('response')) { ?>
+      <div class="err_msg">
+        <?=$this->session->flashdata('response')['error']?>
+      </div>
+      <?php $patient = $this->session->flashdata('response')['data']; ?>
+    <?php } ?>
+    <form action="<?=site_url('admin/save_patient')?>" method="post" enctype="multipart/form-data">
       <input type="hidden" name="id" value="<?=@$patient['id']?>">
+      <label>Image</label><br />
+      <input type="file" name="image" /> <br>
       <label>Name</label><br />
       <input type="text" name="name" value="<?=@$patient['name']?>" />
       <br>

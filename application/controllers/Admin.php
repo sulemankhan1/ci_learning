@@ -17,6 +17,7 @@ class Admin extends CI_Controller {
 
   public function save_patient() {
     if($this->input->post()) {
+      // collecting form data
       $id = $this->input->post('id', TRUE);
       $data = array(
         'name' => $this->input->post('name', TRUE),
@@ -26,9 +27,46 @@ class Admin extends CI_Controller {
         'notes' => $this->input->post('notes', TRUE),
       );
 
+      // Validating form data
+      $err_msg = "";
+      // check fi image is not provided
+      if($_FILES['image']['name'] == "") {
+        $err_msg = "You have to provide an image first!";
+      }
+      // check if name is less than 3
+      if(strlen($data['name']) < 3) {
+        $err_msg = "Name must be greater than or equal to 3 characters";
+      }
+      // check if any of the field is not provided
+      if($data['name'] == "" || $data['email'] == "" || $data['phone'] == "" || $data['address'] == "" || $data['notes'] == "") {
+        $err_msg = "Please provide all fields first!";
+      }
+      // check if email already exists
+      $record = $this->am->getPatientByEmail($data['email']);
+      if(!empty($record)) {
+        $err_msg = "This email already exists";
+      }
+
+      // upload the image
+      if($_FILES['image']['name'] != "") {
+        move_uploaded_file($_FILES['image']['tmp_name'], 'uploads/'.$_FILES['image']['name']);
+        $data['image'] = 'uploads/'.$_FILES['image']['name'];
+      }
+
+
+      // if errors found redirect to form
+      if($err_msg != "") {
+        $this->session->set_flashdata('response', array(
+          'error' => $err_msg,
+          'data' => $data,
+        ));
+        redirect('admin/add_patient');
+      }
+
+      // check if form is submitted for addition
       if($id == "") {
         $this->am->addPatient($data);
-      } else {
+      } else { // form is submitted for updation
         $this->am->updatePatient($data, $id);
       }
       redirect('admin/all_patients');
@@ -36,7 +74,6 @@ class Admin extends CI_Controller {
   }
 
   public function all_patients() {
-
     $patients = $this->am->getAllPatients();
     $this->load->view('patients/all_patients', array(
       'patients' => $patients

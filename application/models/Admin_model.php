@@ -21,6 +21,10 @@ class Admin_model extends CI_Model {
     return $this->db->get_where('patients', array('id' => $id))->row_array();
   }
 
+  public function getPatientByEmail($email) {
+    return $this->db->get_where('patients', array('email' => $email))->row_array();
+  }
+
   public function deletePatientById($id) {
     return $this->db->delete('patients', array('id' => $id));
   }

@@ -13,6 +13,7 @@
     <table border="1" cellpadding="5">
       <tr>
         <th>Id</th>
+        <th>Image</th>
         <th>Patient Name</th>
         <th>Phone</th>
         <th>Address</th>
@@ -23,6 +24,11 @@
       <?php foreach($patients as $patient) { ?>
         <tr>
           <td><?=$patient->id?></td>
+          <td>
+            <?php if(file_exists($patient->image)){ ?>
+              <img src="<?=base_url($patient->image)?>" width="100">
+            <?php } ?>
+          </td>
           <td><?=$patient->name?></td>
           <td><?=$patient->email?></td>
           <td><?=$patient->phone?></td>
