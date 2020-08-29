@@ -19,6 +19,7 @@ class Admin extends CI_Controller {
     if($this->input->post()) {
       // collecting form data
       $id = $this->input->post('id', TRUE);
+      $current_img = $this->input->post('current_img', TRUE);
       $data = array(
         'name' => $this->input->post('name', TRUE),
         'email' => $this->input->post('email', TRUE),
@@ -31,20 +32,26 @@ class Admin extends CI_Controller {
       $err_msg = "";
       // check fi image is not provided
       if($_FILES['image']['name'] == "") {
-        $err_msg = "You have to provide an image first!";
+        if($current_img == "") {
+          $err_msg = "You have to provide an image first!";
+        }
       }
+
       // check if name is less than 3
       if(strlen($data['name']) < 3) {
         $err_msg = "Name must be greater than or equal to 3 characters";
       }
+      
       // check if any of the field is not provided
       if($data['name'] == "" || $data['email'] == "" || $data['phone'] == "" || $data['address'] == "" || $data['notes'] == "") {
         $err_msg = "Please provide all fields first!";
       }
-      // check if email already exists
-      $record = $this->am->getPatientByEmail($data['email']);
-      if(!empty($record)) {
-        $err_msg = "This email already exists";
+      // check if email already exists (for add form submission only)
+      if($id == "") {
+        $record = $this->am->getPatientByEmail($data['email']);
+        if(!empty($record)) {
+          $err_msg = "This email already exists";
+        }
       }
 
       // upload the image
@@ -53,14 +60,17 @@ class Admin extends CI_Controller {
         $data['image'] = 'uploads/'.$_FILES['image']['name'];
       }
 
-
       // if errors found redirect to form
       if($err_msg != "") {
         $this->session->set_flashdata('response', array(
           'error' => $err_msg,
           'data' => $data,
         ));
-        redirect('admin/add_patient');
+        if($id == "") { // add
+          redirect('admin/add_patient');
+        } else { // update
+          redirect('admin/edit_patient/'.$id);
+        }
       }
 
       // check if form is submitted for addition

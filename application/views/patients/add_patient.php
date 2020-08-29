@@ -24,6 +24,11 @@
     <?php } ?>
     <form action="<?=site_url('admin/save_patient')?>" method="post" enctype="multipart/form-data">
       <input type="hidden" name="id" value="<?=@$patient['id']?>">
+      <?php if(@$patient['image'] != "") { ?>
+        <label>Current Image</label><br />
+        <img src="<?=base_url(@$patient['image'])?>" width="100"> <br />
+        <input type="hidden" name="current_img" value="<?=@$patient['image']?>">
+      <?php } ?>
       <label>Image</label><br />
       <input type="file" name="image" /> <br>
       <label>Name</label><br />
