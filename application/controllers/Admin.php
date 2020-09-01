@@ -41,7 +41,7 @@ class Admin extends CI_Controller {
       if(strlen($data['name']) < 3) {
         $err_msg = "Name must be greater than or equal to 3 characters";
       }
-      
+
       // check if any of the field is not provided
       if($data['name'] == "" || $data['email'] == "" || $data['phone'] == "" || $data['address'] == "" || $data['notes'] == "") {
         $err_msg = "Please provide all fields first!";
